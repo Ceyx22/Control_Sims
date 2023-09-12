@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from Simulations.config import *
+from Simulations.Math.config import *
 from Example.kinematics import kinematics
 from ipywidgets import *
 
