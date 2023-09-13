@@ -1,6 +1,6 @@
-from Util.kinematics_2D import kinematics_2D
-from Util.UI import UI
-from Util.util import *
+from Simulations.Util.kinematics_2D import kinematics_2D
+from Simulations.Util.UI import UI
+from Simulations.Util.util import *
 import PySimpleGUI as sg
 
 #threading cannot be done in Py Simple GUI
