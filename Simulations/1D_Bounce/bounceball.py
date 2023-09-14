@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from Simulations.SimUtil import to_CSV, create_fig
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.integrate import solve_ivp
@@ -48,28 +49,12 @@ def one_bounce(t0, ystart, lineNum):
                 data.append([lineNum, sol.t_events[0][0], round(sol.y_events[0][0][0], 3), -ball_e*round(sol.y_events[0][0][1], 3)])
                 
 
-def formatData(name, unformatted_data, header):
-    with open(name, 'w', newline='') as file:
-        # Step 4: Using csv.writer to write the list to the CSV file
-        writer = csv.writer(file)
-        writer.writerow(header)
-        for item in unformatted_data:
-            writer.writerow(item) # Use writerow for single list
-
 
 def seperateData(formatted_data):
     for item in formatted_data:
         time.append(item[1])
         position.append(item[2])
         velocity.append(item[3])
-
-
-def create_fig(xaxis, yaxis, figNum, yaxisName, xaxisName, saveName):
-    plt.figure(figNum)
-    plt.plot(xaxis, yaxis)
-    plt.xlabel(xaxisName)
-    plt.ylabel(yaxisName)
-    plt.savefig(saveName)
 
 start = [y0, y0dot]
 line_num = 1
@@ -80,7 +65,7 @@ while t0 < t_end:
     line_num = data[-1][0]
 
 
-formatData("CSV/Bounce_Ball_Data.csv", data, ["Line Number", "Time", "Position", "Velocity"])
+to_CSV("CSV/Bounce_Ball_Data.csv", data, ["Line Number", "Time", "Position", "Velocity"])
 seperateData(data)
 create_fig(time, position, 1, "Position", "Time", "images/Position.png" )
 create_fig(time, velocity, 2, "Velocity", "Time", "images/Velocity.png" )
