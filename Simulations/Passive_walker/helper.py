@@ -6,7 +6,10 @@ from scipy.integrate import RK45
 from rhs import rhs
 from footstrike import foot_strike
 from SimUtil import to_CSV
+from constants import walker
 import numpy as np
+import math
+from decimal import *
 
 
 def contact(t, z):
@@ -47,43 +50,72 @@ def custom_ode(func, t0, z0, dt, event):
             full_val.append(sub)
     return full_val
 
-def one_step(t0, z0):
+def one_step(t0, z0, num):
     dt = 8
     data = custom_ode(rhs, t0, z0, dt, contact)
-    # to_CSV("CSV/PassiveWalkerData.csv", data, ["Time", "theta1", "theta1dot", "theta2", "theta2dot"])
+    to_CSV("CSV/PassiveWalkerData.csv", data, ["Time", "theta1", "theta1dot", "theta2", "theta2dot"])
     zminus = data[-1][1:] # gets last element and does not include time
-    return foot_strike(zminus)
+    if num == 1:
+        return foot_strike(zminus)
+    else:
+        return data
     
 
 def fixedpt(z):
     t0 = 0
-    zplus = one_step(t0,z)
+    zplus = one_step(t0,z, 1)
     return z-zplus
     #trying to set F = 0 
 
-def partialder(func,z,walker):
-    pert=1e-5
+# to Test stability
+def partialder(func,z):
+    pert = 0.00001 #1e-5
     n = len(z)
-    J = np.zeros(n,n)
-    #### Using forward difference, accuracy linear ####
-    # y0=feval(func,z,walker) 
-    # # zTemp
-    # for i in range(n)
-    #     ztemp=z
-    #     ztemp[i]=ztemp[i]+pert 
-    #     J(:,i)=(feval(FUN,0,ztemp,walker)-y0) 
-    # end
-    # J=(J/pert)
+    # J = np.zeros((n,n))
 
     ### Using central difference, accuracy quadratic ###
-    # for i in range(n):
-    #     ztemp1=z 
-    #     ztemp2=z
-    #     ztemp1[i]=ztemp1[i]+pert 
-    #     ztemp2[i]=ztemp2[i]-pert 
-    #     # 0 is for t0
-    #     J[:,i]=(feval(func,0,ztemp1,walker)-feval(func,0,ztemp2,walker)) 
+    J = []
+    for i in range(n):
+        ztemp1=z 
+        ztemp2=z
+        # print(ztemp1[i])
+        # print(ztemp1[i]+ pert)
+        # print((ztemp1[i]+ pert) - ztemp1[i])
+        ztemp1[i]= ztemp1[i]+ pert 
+        ztemp2[i]= ztemp2[i]-pert 
+        # 0 is for t0
+        temp3 = func(0, ztemp1, 1)
+        temp4 = func(0, ztemp2, 1)
+        print(temp3)
+        print(temp4)
+        new = []
+        for i in range(len(temp3)):
+            new.append(Decimal(temp3[i])-Decimal(temp4[i]))
+        #print(new)
+        J.append(func(0, ztemp1, 1) - func(0, ztemp2, 1))
+    # print(J)
+    #return J/(2*pert)
 
-    return J/(2*pert)
-
+def seperateData(data):
+    # data is list of lists
+    # [time, theta1, theta1dot, theta2, theta2dot]
+    time = []
+    x_h = []
+    y_h = []
+    theta1 = []
+    theta1dot = []
+    theta2 = []
+    theta2dot = []
+    for lis in data:
+        time.append(lis[0])
+        x_h.append(walker.l*math.sin(lis[1]))
+        y_h.append(walker.l*math.cos(lis[1]))
+        theta1.append(lis[1])
+        theta1dot.append(lis[2])
+        theta2.append(lis[3])
+        theta2dot.append(lis[4])
     
+    angles = [theta1, theta1dot, theta2, theta2dot, x_h, y_h]
+    return time, angles
+
+

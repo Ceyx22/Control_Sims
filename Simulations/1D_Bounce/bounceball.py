@@ -1,10 +1,11 @@
-import numpy as np
-import pandas as pd
-from Simulations.SimUtil import to_CSV, create_fig
+import os
+import sys
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
+from SimUtil import to_CSV, create_fig
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.integrate import solve_ivp
-import csv
 
 
 gravity = 9.8
@@ -85,7 +86,6 @@ def update(frame):
 
 ani = FuncAnimation(fig, update, frames=len(data),
                     init_func=init, blit=True, interval = 30)
-plt.show()
    
 ani.save('images/bouncingBall.mp4', 
           writer = 'ffmpeg', fps = 30)

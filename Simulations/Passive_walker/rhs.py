@@ -23,7 +23,6 @@ def rhs(t,z):
     
     b1 = -1.0*M*gravity*l*math.sin(gamma - theta_1) + 1.0*c*gravity*m*math.sin(gamma - theta_1) - 1.0*c*gravity*m*math.sin(-gamma + theta_1 + theta_2) - 2.0*c*l*m*omega1*omega2*math.sin(theta_2) - 1.0*c*l*m*omega2**2*math.sin(theta_2) - 2.0*gravity*l*m*math.sin(gamma - theta_1)
     b2 = 1.0*c*m*(-gravity*math.sin(-gamma + theta_1 + theta_2) + l*omega1**2*math.sin(theta_2))
-    # b2 = -c*m*(gravity*math.sin(theta_1 - gamma + theta_2) - l*omega1**2*math.sin(theta_2));
     b_ss = np.array([[b1], [b2]])
 
     alpha = np.linalg.lstsq(A_ss, b_ss, rcond=None)[0]
